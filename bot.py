@@ -1,5 +1,4 @@
 import requests
-import os
 import re
 import time
 
@@ -29,8 +28,9 @@ def load_postlist():
 		return []
 
 def save_postlist(postlist):
+	idlist = [x[0] for x in postlist]
 	with open('list.txt', 'w') as f:
-		f.write(','.join(postlist))
+		f.write(','.join(idlist))
 
 def initialize_bot():
 	global webhook_url
@@ -59,6 +59,9 @@ if __name__ == '__main__':
 				send_message(format_message(x))
 
 		if update:
-			save_postlist(new_postlist)
+			updated_list = list(set(new_postlist + old_postlist))
+			save_postlist(updated_list)
+		else:
+			print('Up-to-date. %d' % time.time())
 		
 		time.sleep(600) # check every 10 min.
